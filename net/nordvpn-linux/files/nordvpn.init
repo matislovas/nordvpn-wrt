@@ -1,0 +1,94 @@
+#!/bin/sh /etc/rc.common
+
+USE_PROCD=1
+START=80
+
+
+service_triggers() {
+	procd_add_reload_trigger "nordvpn"
+	procd_add_interface_trigger "interface.*.up" wan /etc/init.d/nordvpn reload
+}
+
+section_enabled() {
+	config_get_bool enabled "$1" 'enabled' 0
+	[ $enabled -gt 0 ]
+}
+
+start_service() {
+  local std_err std_out
+
+  config_load nordvpn
+
+  config_get_bool std_out "settings" log_stdout 1
+  config_get_bool std_err "settings" log_stderr 1
+
+  procd_open_instance
+  procd_set_param stdout "$std_out"
+  procd_set_param stderr "$std_err"
+  procd_set_param command /usr/sbin/nordvpnd
+  procd_set_param respawn
+  procd_close_instance
+}
+
+service_started() {
+  local _token _connect_string _lan_subnet
+  local _meshnet _connect_on_startup _ipv6
+
+  config_load nordvpn
+
+  config_get_bool _meshnet "settings" meshnet 1
+  config_get_bool _connect_on_startup "settings" connect_on_startup 1
+  config_get_bool _ipv6 "settings" ipv6 1
+  config_get _lan_subnet "settings" lan_subnet
+  config_get _token "settings" token
+  config_get _connect_string "settings" connect_string
+
+  # Wait 10 secs for dameon to start up
+  TIMEOUT=0;
+
+  while [ -z "`/bin/pidof /usr/sbin/nordvpnd`" ]; do
+    if [ $TIMEOUT -ge 10 ]; then
+      /bin/echo " daemon not started, cleaning up ..."
+      /usr/bin/killall -9 nordvpnd 2> /dev/null > /dev/null
+      return
+    fi
+
+    TIMEOUT=`expr $TIMEOUT + 1`
+
+    /bin/echo -n "."
+
+    /bin/sleep 1
+  done
+
+  /usr/bin/nordvpn set technology nordlynx > /dev/null
+  if [ -n "$_token" ]; then
+    /usr/bin/nordvpn login --token "$_token"
+  fi
+  if [ "$_meshnet" -eq 1 ]; then
+    /usr/bin/nordvpn set mesh on > /dev/null
+  else
+    /usr/bin/nordvpn set mesh off > /dev/null
+  fi
+  if [ -n "$_lan_subnet" ]; then
+    /usr/bin/nordvpn allowlist add subnet "$_lan_subnet" > /dev/null
+  fi
+  if [ "$_ipv6" -eq 1 ]; then
+    /usr/bin/nordvpn set ipv6 off > /dev/null
+  else
+    /usr/bin/nordvpn set ipv6 on > /dev/null
+  fi
+  if [ "$_connect_on_startup" -eq 1 ]; then
+    if [ -n "$_connect_string" ]; then
+      /usr/bin/nordvpn connect "$_connect_string"
+    else
+      /usr/bin/nordvpn connect
+    fi
+  else
+    /usr/bin/nordvpn disconnect > /dev/null
+  fi
+}
+
+stop_service() {
+  /usr/bin/nordvpn disconnect > /dev/null
+  /usr/bin/nordvpn logout --persist-token > /dev/null
+}
