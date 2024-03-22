@@ -30,19 +30,30 @@ define Package/nordvpn-linux
 endef
 
 define Package/nordvpn-linux/description
-  The official NordVPN Linux client.
+	The official NordVPN Linux client.
 endef
 
-define Package/nordvpn-linux/prepare
-endef
+# define Package/nordvpn-linux/prepare
+# endef
 
 define Package/nordvpn-linux/compile
-	mage build:binaries
+	echo "nordvpn-linux Build/Compile" && \
+	@echo "nordvpn-linux Build/Compile"
+endef
+
+define Build/Compile
+	echo "nordvpn-linux Build/Compile" && \
+	@echo "nordvpn-linux Build/Compile"
+endef
+
+define Build/Install
+	echo "nordvpn-linux Build/Install" && \
+	@echo "nordvpn-linux Build/Install"
 endef
 
 define Package/nordvpn-linux/install
-	$(INSTALL_DIR) $(1)/usr/bin
-	$(INSTALL_BIN) $(PKG_BUILD_DIR)/build/nordvpn $(1)/usr/bin/
+	echo "nordvpn-linux Build/Compile" && \
+	@echo "nordvpn-linux Build/Compile"
 endef
 
 $(eval $(call GoBinPackage,nordvpn-linux))
