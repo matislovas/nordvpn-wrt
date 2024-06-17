@@ -1,0 +1,20 @@
+{
+	"luci-app-nordvpn-linux": {
+		"description": "Grant access to NordVPN configuration",
+		"read": {
+			"file": {
+				"/sbin/ip": [ "exec" ],
+				"/sbin/ifconfig": [ "exec" ],
+				"/sbin/logread": [ "exec" ],
+				"/usr/bin/nordvpn": [ "exec" ]
+			},
+			"ubus": {
+				"service": [ "list" ]
+			},
+			"uci": [ "nordvpn" ]
+		},
+		"write": {
+			"uci": [ "nordvpn" ]
+		}
+	}
+}

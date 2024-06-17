@@ -1,0 +1,45 @@
+{
+	"admin/services/nordvpn": {
+		"title": "NordVPN",
+		"order": 90,
+		"action": {
+			"type": "firstchild"
+		},
+		"depends": {
+			"acl": [ "luci-app-nordvpn-linux" ],
+			"uci": { "nordvpn": true }
+		}
+	},
+	"admin/services/nordvpn/setting": {
+		"title": "Global Settings",
+		"order": 10,
+		"action": {
+			"type": "view",
+			"path": "nordvpn/setting"
+		}
+	},
+	"admin/services/nordvpn/interface": {
+		"title": "Interface Info",
+		"order": 20,
+		"action": {
+			"type": "view",
+			"path": "nordvpn/interface"
+		}
+	},
+	"admin/services/nordvpn/meshnet": {
+		"title": "Meshnet Info",
+		"order": 30,
+		"action": {
+			"type": "view",
+			"path": "nordvpn/meshnet"
+		}
+	},
+	"admin/services/nordvpn/log": {
+		"title": "Logs",
+		"order": 40,
+		"action": {
+			"type": "view",
+			"path": "nordvpn/log"
+		}
+	}
+}

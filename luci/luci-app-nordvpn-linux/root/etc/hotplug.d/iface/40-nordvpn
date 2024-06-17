@@ -1,0 +1,8 @@
+#!/bin/sh
+
+enabled="$(uci get nordvpn.settings.enabled)"
+
+[ "$ACTION" = ifup -o "$ACTION" = ifupdate ] || exit 0
+[ "$ACTION" = ifupdate -a -z "$IFUPDATE_ADDRESSES" -a -z "$IFUPDATE_DATA" ] && exit 0
+[ "$enabled" -eq "1" ] || exit 0
+/etc/init.d/nordvpn start > /tmp/nordvpn.log 2>&1 &
