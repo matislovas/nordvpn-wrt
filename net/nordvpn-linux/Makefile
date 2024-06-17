@@ -5,10 +5,10 @@ PKG_VERSION:=3.18.2_openwrt
 PKG_RELEASE:=1
 
 PKG_SOURCE:=$(PKG_VERSION).zip
-PKG_SOURCE_URL:=https://github.com/matislovas/$(PKG_NAME)/archive/
+PKG_SOURCE_URL:=https://github.com/NordSecurity/$(PKG_NAME)/archive/
 PKG_HASH:=skip
 
-PKG_GIT_URL:=github.com/matislovas/nordvpn-linux
+PKG_GIT_URL:=github.com/NordSecurity/nordvpn-linux
 PKG_GIT_REF:=$(PKG_VERSION)
 
 PKG_MAINTAINER:=Matas Misiunas <matislovas@gmail.com>
